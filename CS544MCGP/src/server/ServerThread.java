@@ -5,7 +5,6 @@ package server;
  *
  */
 public class ServerThread extends Thread {
-	@Override
 	public void run() {
 		super.run();
 		
