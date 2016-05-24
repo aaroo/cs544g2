@@ -28,24 +28,10 @@ public class Server {
 		}
 	}
 
+	/**
+	 * set up the server, the method will create a server handler that deal with all clients connection
+	 */
 	public void service() {
-		while (true) {
-			Socket socket = null;
-			try {
-				socket = serverSocket.accept();
-				System.out.println("New connection accepted " + socket.getInetAddress() + ":" + socket.getPort());
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				if (socket != null) {
-					try {
-						socket.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
+		ServerHandler handler = new ServerHandler(serverSocket);
 	}
-
 }

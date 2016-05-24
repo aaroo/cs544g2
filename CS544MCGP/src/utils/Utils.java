@@ -34,4 +34,12 @@ public class Utils {
 		}
 		return null;
 	}
+	
+	public static byte[] toByteStream(String hexStr) {
+		String[] bytes = hexStr.split(" ");
+		byte[] res = new byte[bytes.length];
+		for (int i = 0; i < bytes.length; i++)
+			res[i] = (byte) Integer.parseInt(bytes[i], 16);
+		return res;
+	}
 }
