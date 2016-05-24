@@ -17,26 +17,9 @@ public class ServerHandler implements Runnable {
 	}
 
 	public void run() {
-		while (true) {
-			Socket socket = null;
-			try {
-				socket = serverSocket.accept();
-//				System.out.println("New connection accepted "
-//						+ socket.getInetAddress() + ":" + socket.getPort());
-				ServerThread thread = new ServerThread(socket);
-				thread.start();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				if (socket != null) {
-					try {
-						socket.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
 
-		}
+		ServerThread thread = new ServerThread(serverSocket);
+		thread.start();
 	}
+
 }

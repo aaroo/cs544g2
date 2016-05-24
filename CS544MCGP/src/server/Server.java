@@ -16,13 +16,13 @@ public class Server {
 
 	public Server() throws IOException {
 		serverSocket = new ServerSocket(Server.PORT);
-		System.out.println("server started");
 	}
 
 	public static void main(String[] args) {
 		try {
 			Server server = new Server();
 			server.service();
+			System.out.println("server started");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -33,5 +33,7 @@ public class Server {
 	 */
 	public void service() {
 		ServerHandler handler = new ServerHandler(serverSocket);
+		Thread t = new Thread(handler);
+		t.start();
 	}
 }
