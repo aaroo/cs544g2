@@ -1,0 +1,6 @@
+- connect to the server
+- log in to server
+- retrieve device list
+- for each device retrieve status
+- disconnect from the server
+- render table to display
