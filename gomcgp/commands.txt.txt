@@ -1,6 +1,22 @@
+Command
+- What command does
+	- COmmand line syntax
+
+
+-enter server ip
+	- server ip
+
 - connect to the server
-- log in to server
+	-server connect username
+
+-disconnect from server
+	-server disconnect username	
+
 - retrieve device list
+	-device retrieve listname
+
 - for each device retrieve status
-- disconnect from the server
+	-device update listname
+
 - render table to display
+	- display
