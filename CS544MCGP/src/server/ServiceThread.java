@@ -19,19 +19,20 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.Socket;
+
+import javax.net.ssl.SSLSocket;
 
 import utils.Utils;
 
 public class ServiceThread extends Thread {
 
-	private Socket socket;
+	private SSLSocket sslsocket;
 	private BufferedReader bufIn;
 	private BufferedWriter bufOut;
 	private int ID;
 
-	public ServiceThread(Socket socket, int ID) {
-		this.socket = socket;
+	public ServiceThread(SSLSocket sslsocket, int ID) {
+		this.sslsocket = sslsocket;
 		this.ID = ID;
 	}
 
@@ -40,12 +41,12 @@ public class ServiceThread extends Thread {
 		try {
 			// using a bufferedReader to store data received by the socket
 			bufIn = new BufferedReader(new InputStreamReader(
-					socket.getInputStream()));
+					sslsocket.getInputStream()));
 			// using a bufferedWriter to store data that will be sent to the
 			// client
 			// through the socket
 			bufOut = new BufferedWriter(new OutputStreamWriter(
-					socket.getOutputStream()));
+					sslsocket.getOutputStream()));
 
 			while (true) {
 				String line = null;
@@ -72,9 +73,9 @@ public class ServiceThread extends Thread {
 			} catch (IOException e) {
 				throw new RuntimeException("write close failed");
 			}
-			if (socket != null) {
+			if (sslsocket != null) {
 				try {
-					socket.close();
+					sslsocket.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -87,7 +88,7 @@ public class ServiceThread extends Thread {
 	 */
 	private void shutdown() {
 		try {
-			socket.close();
+			sslsocket.close();
 		} catch (IOException e) {
 			throw new RuntimeException("connection close failed");
 		}
