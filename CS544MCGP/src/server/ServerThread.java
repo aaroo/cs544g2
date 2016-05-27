@@ -1,14 +1,16 @@
 package server;
 
+import utils.Utils;
+
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
-import java.net.Socket;
-
-import utils.Utils;
 
 /**
  * thread for a specific client connection
@@ -25,16 +27,27 @@ public class ServerThread extends Thread {
 	}
 
 	public void run() {
-		Socket socket = null;
-		while (true) {
+		//Socket socket = null;
+        SSLServerSocket sslserversocket = null;
+        SSLServerSocketFactory sslserversocketfactory =
+                (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        try {
+             sslserversocket = (SSLServerSocket) sslserversocketfactory.createServerSocket(9999);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        while (true) {
 			try {
-				socket = serversocket.accept();
-				System.out.println("New connection accepted "
-						+ socket.getInetAddress() + ":" + socket.getPort());
+				//socket = serversocket.accept();
+                SSLSocket sslsocket = (SSLSocket) sslserversocket.accept();
+
+                System.out.println("New connection accepted "
+						+ sslserversocket.getInetAddress() + ":9999");
 				bufr = new BufferedReader(new InputStreamReader(
-						socket.getInputStream()));
+						sslsocket.getInputStream()));
 				bufw = new BufferedWriter(new OutputStreamWriter(
-						socket.getOutputStream()));
+						sslsocket.getOutputStream()));
 
 				while (true) {
 					String line = null;
@@ -60,9 +73,9 @@ public class ServerThread extends Thread {
 				} catch (IOException e) {
 					throw new RuntimeException("write close failed");
 				}
-				if (socket != null) {
+				if (sslserversocket != null) {
 					try {
-						socket.close();
+						sslserversocket.close();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

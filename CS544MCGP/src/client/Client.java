@@ -1,10 +1,11 @@
 package client;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.Socket;
 
 /**
  * client used to do the test
@@ -28,7 +29,11 @@ public class Client {
 		 * sockets[i].close(); }
 		 */
 
-		Socket socket = new Socket("localhost", 9070);
+		//Socket socket = new Socket("localhost", 9070);
+
+        SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+        SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket("localhost", 9999);
+
 		// object to read data from keyboard
 		BufferedReader bufr = new BufferedReader(new InputStreamReader(
 				System.in));
@@ -36,11 +41,11 @@ public class Client {
 		// destination, write data into outputstream of the socket and send to
 		// server
 		BufferedWriter bufOut = new BufferedWriter(new OutputStreamWriter(
-				socket.getOutputStream()));
+				sslsocket.getOutputStream()));
 
 		// reader to read data sent by the server
 		BufferedReader bufIn = new BufferedReader(new InputStreamReader(
-				socket.getInputStream()));
+				sslsocket.getInputStream()));
 
 		String line = null;
 
@@ -58,7 +63,7 @@ public class Client {
 		}
 
 		bufr.close();
-		socket.close();
+		sslsocket.close();
 
 	}
 }
