@@ -53,12 +53,11 @@ public class Client {
 			bufOut.newLine();
 			bufOut.flush();
 
-			String str = bufIn.readLine();
-			System.out.println("server:" + str);
 		}
 
+		// String str = bufIn.readLine();
+		// System.out.println("server:" + str);
 		bufr.close();
 		socket.close();
-
 	}
 }
