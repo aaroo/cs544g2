@@ -9,7 +9,7 @@ public class MCGPMessageHandler {
 
     public static Message getOutputForInput(Message message) {
        if(message.getOp().equalsIgnoreCase("status")) {
-
+            getStatus(message);
        } else if(message.getOp().equalsIgnoreCase("control")) {
            executeControl();
        }
