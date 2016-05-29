@@ -11,9 +11,9 @@ public class MCGPMessageHandler {
        if(message.getOp().equalsIgnoreCase("status")) {
             getStatus(message);
        } else if(message.getOp().equalsIgnoreCase("control")) {
-           executeControl();
+           executeControl(message);
        }
-
+        return null;
 
     }
 
@@ -30,7 +30,7 @@ public class MCGPMessageHandler {
         return output;
     }
 
-    private static void executeControl() {
-
+    private static Message executeControl(Message message) {
+        return null;
     }
 }
