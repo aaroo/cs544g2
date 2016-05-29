@@ -1,6 +1,6 @@
 /** 
  * CS544 Computer Networks
- * create time£º2016/5/22
+ * create timeï¿½ï¿½2016/5/22
  * group member: 
  *   Kenneth Balogh
  *   Arudra Venkat
@@ -14,15 +14,16 @@
  */
 package server;
 
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import javax.net.ssl.SSLSocket;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-
-import javax.net.ssl.SSLSocket;
-
-import utils.Utils;
 
 public class ServiceThread extends Thread {
 
@@ -42,13 +43,41 @@ public class ServiceThread extends Thread {
 			// using a bufferedReader to store data received by the socket
 			bufIn = new BufferedReader(new InputStreamReader(
 					sslsocket.getInputStream()));
+            while(true) {
+                try {
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
+                    mapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false);
+                    Door door = mapper.readValue(bufIn, Door.class);
+                    System.out.println("Door name = " + door.getName());
+                    System.out.println("Door status = " + door.getStatus());
+
+                    //Some class methods to do message handling
+
+                    Door output = MCGPMessageHandler.getOutputForInput(door);
+
+
+
+                    bufOut = new BufferedWriter(new OutputStreamWriter(
+                            sslsocket.getOutputStream()));
+
+                    mapper.writeValue(bufOut, door);
+                    bufOut.flush();
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
 			// using a bufferedWriter to store data that will be sent to the
 			// client
 			// through the socket
-			bufOut = new BufferedWriter(new OutputStreamWriter(
-					sslsocket.getOutputStream()));
 
-			while (true) {
+
+			/*while (true) {
 				String line = null;
 				while ((line = bufIn.readLine()) != null) {
 					System.out.println("data received: " + line);
@@ -56,9 +85,10 @@ public class ServiceThread extends Thread {
 					// usage.
 					byte[] cmd = Utils.toByteStream(line);
 					// System.out.println("data reveived in byte:" + cmd);
+
 				}
-			}
-		} catch (IOException e) {
+			}*/
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {

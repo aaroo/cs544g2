@@ -1,6 +1,6 @@
 /** 
  * CS544 Computer Networks
- * create time£º2016/5/22
+ * create timeï¿½ï¿½2016/5/22
  * group member: 
  *   Kenneth Balogh
  *   Arudra Venkat
@@ -61,6 +61,8 @@ public class ConnectionHandler extends Thread {
 				e.printStackTrace();
 			}
 		}
+
+
 		ServiceThread serviceThread = new ServiceThread(sslsocket, ID);
 		serviceThread.start();
 	}
