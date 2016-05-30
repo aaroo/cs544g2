@@ -83,6 +83,7 @@ Field descriptions:
 * errno (1 byte) integer according to Table 2
 * ident (4 bytes) UTF-8 encoded string
 * dev_id (1 byte) integer (device unique identifier on the server)
+  dev_id MUST NOT be zero (reserved for empty)
 * dev_type (1 byte) integer according to Table 3
 * dev_status (1 byte) integer according to Table 3
 * dev_action (1 byte) integer according to Table 3

@@ -3,6 +3,8 @@ package main
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -21,5 +23,102 @@ func clientConnect(c *cli.Context) (conn *tls.Conn) {
 	config := tls.Config{RootCAs: ca, Certificates: []tls.Certificate{cert}}
 	conn, err = tls.Dial("tcp", c.GlobalString("server"), &config)
 	checkErrFatal("Error connecting to server", err)
+	return
+}
+
+func clientVersionHandshake(conn *tls.Conn) (err error) {
+	vh := PDU{Version: SUPPORTED_VERSION, Operation: OP_VERSION}
+	err = vh.Write(conn)
+	if err != nil {
+		fmt.Println("conn write failed:", err)
+		return
+	}
+	response, err := readPDU(conn)
+	if err != nil {
+		fmt.Println("reading response PDU failed:", err)
+		return
+	}
+
+	fmt.Printf("Received handshake response: %+v\n", response)
+
+	if response.Version != SUPPORTED_VERSION || response.Error != 0 {
+		return errors.New("Unsuccessful Version Handshake")
+	}
+	return
+}
+
+func clientAuthenticate(conn *tls.Conn, ident string) (err error) {
+	vh := PDU{Version: SUPPORTED_VERSION, Operation: OP_AUTHENTICATE, Identifier: ident}
+	err = vh.Write(conn)
+	if err != nil {
+		fmt.Println("conn write failed:", err)
+		return
+	}
+	response, err := readPDU(conn)
+	if err != nil {
+		fmt.Println("reading response PDU failed:", err)
+		return
+	}
+
+	fmt.Printf("Received authentication response: %+v\n", response)
+
+	if response.Error != 0 {
+		return errors.New("Unsuccessful Authentication")
+	}
+	return
+}
+
+func clientDeviceList(conn *tls.Conn) (l_devices []Device, err error) {
+	vh := PDU{Version: SUPPORTED_VERSION, Operation: OP_LIST}
+	err = vh.Write(conn)
+	if err != nil {
+		fmt.Println("conn write failed:", err)
+		return
+	}
+
+	response := PDU{Operation: OP_LIST_CONTINUED}
+	for response.Operation == OP_LIST_CONTINUED {
+		response, err = readPDU(conn)
+		if err != nil {
+			fmt.Println("reading response PDU failed:", err)
+			return
+		}
+
+		fmt.Printf("Received list response: %+v\n", response)
+		for _, v := range response.Devices {
+			if v.Id != 0 {
+				l_devices = append(l_devices, v)
+			}
+		}
+	}
+
+	if response.Error != 0 {
+		return l_devices, errors.New("Unsuccessful List")
+	}
+	return
+}
+
+func clientAction(conn *tls.Conn, id, action int8) (err error) {
+	var l_devices [5]Device
+	l_devices[0].Id = id
+	l_devices[0].Action = action
+	vh := PDU{Version: SUPPORTED_VERSION, Operation: OP_CONTROL, Devices: l_devices}
+	err = vh.Write(conn)
+	if err != nil {
+		fmt.Println("conn write failed:", err)
+		return
+	}
+
+	response, err := readPDU(conn)
+	if err != nil {
+		fmt.Println("reading response PDU failed:", err)
+		return
+	}
+
+	fmt.Printf("Received action response: %+v\n", response)
+
+	if response.Error != 0 {
+		return errors.New("Unsuccessful action")
+	}
 	return
 }

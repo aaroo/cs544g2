@@ -5,9 +5,11 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
-	"net"
+	"math"
+	mrand "math/rand"
 	"os"
 	"time"
 
@@ -57,6 +59,7 @@ func runServer(c *cli.Context) error {
 
 	listener, err := tls.Listen("tcp", bindTo, &config)
 	checkErrFatal("Error listening on "+bindTo, err)
+	defer listener.Close()
 	fmt.Println("Now listening...")
 	for {
 		conn, err := listener.Accept()
@@ -64,32 +67,122 @@ func runServer(c *cli.Context) error {
 			fmt.Println(err.Error())
 			continue
 		}
-		defer conn.Close()
 		fmt.Printf("Accepted connection from %s\n", conn.RemoteAddr())
 		tlsconn, ok := conn.(*tls.Conn)
 		tlsconn.Handshake()
 		if ok {
+			//fmt.Printf("%+v\n", tlsconn.ConnectionState().PeerCertificates[0])
 			fmt.Printf("Peer CN: %s\n", tlsconn.ConnectionState().PeerCertificates[0].Subject.CommonName)
 		}
-		go handleClient(conn)
+		go handleClient(tlsconn)
 	}
 
 	return nil
 }
 
-func handleClient(conn net.Conn) {
-	defer conn.Close()
+func handleClient(conn *tls.Conn) {
+	state := "awaiting-version-handshake"
+	var response PDU
 
-	var buf [512]byte
 	for {
-		fmt.Println("Trying to read")
-		n, err := conn.Read(buf[0:])
-		if err != nil {
-			fmt.Println(err)
-		}
-		_, err2 := conn.Write(buf[0:n])
-		if err2 != nil {
+		pdu, err := readPDU(conn)
+		if err == io.EOF {
+			conn.Close()
+			fmt.Println("Connection closed.")
 			return
 		}
+		if err != nil {
+			fmt.Println("reading PDU failed:", err)
+			conn.Close()
+			return
+		}
+
+		switch state {
+		case "awaiting-version-handshake":
+			{
+				if pdu.Version == SUPPORTED_VERSION && pdu.Operation == OP_VERSION {
+					response = PDU{Version: SUPPORTED_VERSION, Operation: OP_VERSION}
+					state = "awaiting-authentication"
+				} else {
+					response = PDU{Version: SUPPORTED_VERSION, Operation: OP_VERSION, Error: ERR_VERSION}
+					// no change in state
+				}
+				if err := response.Write(conn); err != nil {
+					fmt.Printf("Error sending response: %s\n", err)
+					conn.Close()
+					return
+				}
+			}
+		case "awaiting-authentication":
+			{
+				fmt.Printf("Received ident (%d): %s\nmatch: %+v\n",
+					len(pdu.Identifier), pdu.Identifier, pdu.Identifier == "john")
+				if pdu.Operation == OP_AUTHENTICATE && pdu.Identifier == "john" {
+					response = PDU{Version: SUPPORTED_VERSION, Operation: OP_AUTHENTICATE}
+					state = "idle"
+				} else {
+					response = PDU{Version: SUPPORTED_VERSION, Operation: OP_AUTHENTICATE, Error: ERR_AUTHENTICATE}
+					// no change in state
+				}
+				if err := response.Write(conn); err != nil {
+					fmt.Printf("Error sending response: %s\n", err)
+					conn.Close()
+					return
+				}
+			}
+		case "idle":
+			{
+				if pdu.Operation == OP_LIST {
+					no_packets := int(math.Ceil(float64(len(devices)) / 5))
+					for i := 0; i < no_packets; i++ {
+						var l_devices [5]Device
+						for j := 0; j < 5; j++ {
+							if i*5+j < len(devices) {
+								l_devices[j] = devices[i*5+j]
+							}
+						}
+						response = PDU{Version: SUPPORTED_VERSION, Operation: OP_LIST, Devices: l_devices}
+						if i+1 < no_packets {
+							response.Operation = OP_LIST_CONTINUED
+							if err := response.Write(conn); err != nil {
+								fmt.Printf("Error sending response: %s\n", err)
+								conn.Close()
+								return
+							}
+						}
+					}
+				} else if pdu.Operation == OP_CONTROL {
+					var success bool
+					for k, v := range devices {
+						if v.Id != pdu.Devices[0].Id {
+							continue
+						}
+
+						if v.Type == TYPE_PRESSURE || v.Type == TYPE_TEMP {
+							if pdu.Devices[0].Action == STATUS_ON {
+								devices[k].Value = mrand.Float32() * 10
+							} else {
+								devices[k].Value = mrand.Float32() * 10
+							}
+						}
+						devices[k].Status = pdu.Devices[0].Action
+						success = true
+					}
+					if success {
+						response = PDU{Version: SUPPORTED_VERSION, Operation: OP_CONTROL}
+					} else {
+						response = PDU{Version: SUPPORTED_VERSION, Operation: OP_CONTROL, Error: ERR_CONTROL}
+					}
+				} else {
+					response = PDU{Version: SUPPORTED_VERSION, Operation: pdu.Operation, Error: ERR_UNEXPECTED_OP}
+				}
+				if err := response.Write(conn); err != nil {
+					fmt.Printf("Error sending response: %s\n", err)
+					conn.Close()
+					return
+				}
+			}
+		}
+
 	}
 }
