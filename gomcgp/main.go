@@ -13,70 +13,39 @@ var (
 )
 
 func main() {
-
-	var srcIPstr string = "127.0.0.1"
-
 	app := cli.NewApp()
 	app.Name = "gomcgp"
 	app.Usage = "CLI client MCGP server"
 	app.Version = buildver + " MCGP client (built " + buildtime + ")"
-	app.Action = cli.ShowAppHelp
 	app.Author = "Group 2"
 	app.Email = ""
 	app.EnableBashCompletion = true
 
 	app.Flags = []cli.Flag{
-		cli.StringFlag{Name: "config, c", Value: "mcgp.gcfg",
-			Usage: "path to config file in gcfg format", EnvVar: "MCGP_CONFIG"},
+		cli.StringFlag{Name: "certificate, c", Value: "certificate.pem",
+			Usage: "path to certificate in PEM format", EnvVar: "CERTIFICATE_PATH"},
+		cli.StringFlag{Name: "key, k", Value: "key.pem",
+			Usage: "path to key in PEM format", EnvVar: "KEY_PATH"},
+		cli.StringFlag{Name: "ca", Value: "ca.pem",
+			Usage: "path to CA in PEM format", EnvVar: "CA_PATH"},
+		cli.StringFlag{Name: "server, s", Value: "localhost:6666",
+			Usage: "server address in format host:port", EnvVar: "SERVER_ADDRESS"},
 	}
 
 	app.Commands = []cli.Command{
 		{
-			Name:  "Test",
-			Usage: "Test",
-			Action: func(c *cli.Context) {
-				fmt.Println("test 1")
-			},
+			Name:      "server",
+			ShortName: "s",
+			Usage:     "start MGCP server",
+			Action:    runServer,
 		},
 		{
-			Name:  "display",
-			Usage: "Display Status of all devices",
-			Action: func(c *cli.Context) {
-				fmt.Println("test 2")
-			},
-		},
-		{
-			Name:  "ip",
-			Usage: "Enter IP Address of Server",
+			Name:  "debug",
+			Usage: "Test connection",
 			Action: func(c *cli.Context) error {
-				srcIPstr = c.Args().First()
-				fmt.Println("Server IP: ", srcIPstr)
+				conn := clientConnect(c)
+				conn.Close()
 				return nil
-			},
-		},
-		{
-			Name:  "server",
-			Usage: "options for server commands",
-			Subcommands: []cli.Command{
-				{
-					Name:  "connect",
-					Usage: "username",
-					Action: func(c *cli.Context) error {
-						fmt.Println("User: ", c.Args().First())
-						fmt.Println("Server IP: ", srcIPstr)
-						//send packet
-						return nil
-					},
-				},
-				{
-					Name:  "disconnect",
-					Usage: "remove an existing template",
-					Action: func(c *cli.Context) error {
-						fmt.Println("Disconnected: ", srcIPstr)
-						//send disconnect
-						return nil
-					},
-				},
 			},
 		},
 		{
