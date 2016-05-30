@@ -113,6 +113,7 @@ Error Byte		Error Reason
 0x02			Authentication Error
 0x03            List Devices Error
 0x04            Control error
+0x05            Unexpected operation
 
 Table 2: Error Bytes
 ```
