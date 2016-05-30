@@ -123,8 +123,8 @@ Table 2: Error Bytes
 
 Device Code Device Type			States                   Available Actions
 0x00   ->   /empty/
-0x01   ->   Garage Door		   open(0x00)/closed(0x01)  turn on(0x01)/off(0x00)
-0x02   ->   Light              on(0x01)/off(0x00)       open(0x01)/close(0x00)
+0x01   ->   Garage Door		   open(0x00)/closed(0x01)  open(0x01)/close(0x00)
+0x02   ->   Light              on(0x01)/off(0x00)       turn on(0x01)/off(0x00)
 0x03   ->   Temp Sensor 	   on(0x01)/off(0x00)       (no actions)
 0x04   ->   BaroPres Sensor    on(0x01)/off(0x00)       (no actions)
 
