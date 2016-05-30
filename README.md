@@ -2,4 +2,4 @@
 
 [Specification](specs/document.md)
 
-[Go implementation](gomgcp)
+[Go implementation](gomcgp)
