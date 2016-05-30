@@ -6,10 +6,6 @@
    |                                                               |
    |                       payload  (variable)                     |
    |                                                               |
-   +---------------+---------------+---------------+---------------+
-   |  sig ver  (1) |         challenge (2)         |  sig len (1)  |
-   +---------------+-------------------------------+---------------+
-   |                        signature (variable)                   |
    +---------------------------------------------------------------+
 
                   Figure 1:  Format of a MGCP message
@@ -20,7 +16,3 @@ Field descriptions:
  * op (1 byte) is according to Table 1
  * errno (1 byte) is according to Table 2
  * payload length (1 byte) is the size (in bits) of payload (following)
- * signature version (1 byte) is used to differentiate between two available signature generation methods
- * challenge (2 bytes) is sent by the server to the client, to be used when signing next message
- * signature length (1 byte) is the size (in bits) of signature
- 
