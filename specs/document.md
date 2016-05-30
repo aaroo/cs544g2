@@ -78,15 +78,15 @@ Flow control is handled at the TCP/IP Layer.
 
 Field descriptions:
 
-* version (1 byte) integer is now 0x01 (MUST be set on every packet)
-* op (1 byte) integer according to Table 1
-* errno (1 byte) integer according to Table 2
+* version (1 byte) unsigned integer is now 0x01 (MUST be set on every packet)
+* op (1 byte) unsigned integer according to Table 1
+* errno (1 byte) unsigned integer according to Table 2
 * ident (4 bytes) UTF-8 encoded string
-* dev_id (1 byte) integer (device unique identifier on the server)
+* dev_id (1 byte) unsigned integer (device unique identifier on the server)
   dev_id MUST NOT be zero (reserved for empty)
-* dev_type (1 byte) integer according to Table 3
-* dev_status (1 byte) integer according to Table 3
-* dev_action (1 byte) integer according to Table 3
+* dev_type (1 byte) unsigned integer according to Table 3
+* dev_status (1 byte) unsigned integer according to Table 3
+* dev_action (1 byte) unsigned integer according to Table 3
 * dev_value is a 32 bit (4 bytes) floating point number
 
 All messages are an ordered byte stream with a fixed size with values coded
