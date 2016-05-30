@@ -1,4 +1,4 @@
-Service Description
+1. Service Description
 =======
 
 The Monitor and Control Garage Protocol (MCGP) provides a mechanism for users
@@ -9,7 +9,7 @@ its transport layer protocol in order to have a reliable, secure and ordered
 connection.
 
 The protocol works in a client-server mode and provides authentication and
-encryption using TLS. After the client passes the server’s authentication,
+encryption using TLS. After the client passes the serverâ€™s authentication,
 users can have a remote connection with their garage. Applications that follow
 MCGP will provide two services to users: 
 
@@ -24,7 +24,7 @@ diagram of the MCGP.
 
 ![Figure 1](figure1.bmp)
 
-Message Definition – PDU
+2. Message Definition â€“ PDU
 =======
 
 # 2.1 Addressing
@@ -138,7 +138,7 @@ sent by either the client or server.
 The protocol flow is as follows:
 
 0) Connect with TLS Handshake
-1) Handshake – Client sends the protocol version
+1) Handshake â€“ Client sends the protocol version
 2) Authentication - Client sends the identity it wants to use
 2) Listing - Client sends a query to list all devices and states
 3) Control - Client sends <device_id, action_id> tuple
@@ -146,7 +146,7 @@ The protocol flow is as follows:
 
 All fields that are unused should be set to zero.
 
-## Handshake
+## 2.4.1 Handshake
 
 Client sends to server a single packet:
 * version=X
@@ -162,7 +162,7 @@ Erronous server response:
 * op=0x02 (version check)
 * errno=0x01 (version not available)
 
-## Authentication
+## 2.4.2 Authentication
 
 Client sends to server a single packet:
 * version=X
@@ -179,7 +179,7 @@ Erronous server response:
 * op=0x02 (authentication)
 * errno=0x02 (authentication error)
 
-## Listing
+## 2.4.3 Listing
 
 Client sends to server a single packet:
 * version=X
@@ -204,7 +204,7 @@ Erronous server response:
 * op=0x03 (list devices)
 * errno=0x03 (list devices error)
 
-## Control
+## 2.4.4 Control
 
 Client sends to server a single packet:
 * version=X
@@ -266,14 +266,14 @@ block for future home automation product protocols.
 5. Security
 =======
 
-# 1. Security model
+# 5.1 Security model
 
 The MCGP protocol's security model relies on SSL/TLS with client certificate
 authentication. The use of SSL/TLS over the TCP connection established by MGCP
 ensures confidentiality and authenticity, as well as protects against replay
 attacks (as does TLS).
 
-# 2. Authentication method
+# 5.2 Authentication method
 
 The MGCP server only accepts connections from clients that present a client
 certificate during TLS handshake that is signed by the Certificate Authority
@@ -287,7 +287,7 @@ MAY allow certain certificate holders (identified by CN) to impersonate
 other users. This authentication field allows for this possibility without
 the need to create extra certificates.
 
-# 3. Security risks / vulnerabilities
+# 5.3 Security risks / vulnerabilities
 
 * Server spoofing / MITM attacks - the use of TLS provides sufficient
   resiliency against MITM attacks.
