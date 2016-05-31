@@ -50,11 +50,17 @@ Windows Setup to Compile Source
 	If you see The system cannot find the path specified. Then the URL isn’t right. Once you have it right, create the link to the directory using this format: C:\Users\<user>\AppData\Local\GitHub\PortableGit_<guid>\cmd
 	(Note: \cmd at the end, not \cmd\git.exe anymore!)
 	
-6)Install CLI Package 
-	- Run go get github.com/urfave/cli from Command Line
-		-Run go get github.com/olekukonko/tablewriter
+6)a. Install CLI Packages (One by One) 
+	- Run: go get github.com/urfave/cli from Command Line
+		-Run: go get github.com/olekukonko/tablewriter
 		
-	- WIll Add files to directory specified in GOPATH
+	- Will Add files to directory specified in GOPATH
+
+6)b. Install And Build at Once - If GOPATH and Git are Setup in path	
+	# git clone git@github.com:aaroo/cs544g2.git
+	# cd cs544g2/gomcgp
+	# go get
+	# go build
 
 How to Run Executable
 
