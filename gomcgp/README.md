@@ -1,3 +1,21 @@
+# Manual testing
+
+```bash
+# should print help:
+gomcgp
+# should print device list:
+gomcgp device list
+# should print authentication failure:
+gomcgp -i admin device list
+# should turn on thermometer
+gomcgp action --on 6
+# should close the garage door:
+gomcgp action --close 1
+# should show above changes:
+gomcgp device list
+
+```
+
 # How to build after GO is setup (See Setup Below)
 
 ```bash\windows
