@@ -52,6 +52,8 @@ Windows Setup to Compile Source
 	
 6)Install CLI Package 
 	- Run go get github.com/urfave/cli from Command Line
+		-Run go get github.com/olekukonko/tablewriter
+		
 	- WIll Add files to directory specified in GOPATH
 
 How to Run Executable
