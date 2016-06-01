@@ -289,7 +289,15 @@ MAY allow certain certificate holders (identified by CN) to impersonate
 other users. This authentication field allows for this possibility without
 the need to create extra certificates.
 
-# 5.3 Security risks / vulnerabilities
+An example scenario would include a special-purpose certificate with CN such
+as `admin` that would allow the user of this certificate to provide any
+identity to the server and have it accepted. The protocol definition is
+flexible in the implementation of the meaning of these authentication fields
+and can be made very powerful. A minimum reference implementation SHALL check
+that the CN of the certificate matches the `ident` field in the authentication
+phase.
+
+# 5.3 Solved security challenges
 
 * Server spoofing / MITM attacks - the use of TLS provides sufficient
   resiliency against MITM attacks.
