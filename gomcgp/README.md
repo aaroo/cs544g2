@@ -38,8 +38,8 @@ Windows 7
   - In the NEW System Variable window, specify the value of the GOPATH environment variable
   -     C:\GOPAT
 - Install [Git](https://help.github.com/desktop/guides/getting-started/installing-github-desktop/)
-- Add Git to Path
-- 
+- Add Git to Path same instructions as above
+
 >Need to locate the Git \cmd directory your computer. Git is typically located here:
 -       C:\Users\<user>\AppData\Local\GitHub\PortableGit_<guid>\cmd\git.exe
 >On your computer, replace <user> with your user and find out what the <guid> is for your computer. 
