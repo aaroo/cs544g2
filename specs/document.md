@@ -239,11 +239,10 @@ provides control and security is important in an ever connected world.
 
 3. DFA
 =======  
-Figure3.1 is the new DFA of the MCGP protocol. It has 4 states, after the connection between client and server successfully been set up.The server will check whether the client's version is supported or not. If not, the connection will be closed. If the version is supported by the server, it will send back an response and move to the await authentication state. In the authentication state, the server will check whether or not the identifier sent by the client matches its own. If not, the connection will be closed. If succeed,  
-the server will move to idle state. In idle state, the server will keep on listening request sent by the client. It supposed to deal with two kinds of operation, list and control. When the server receives list command,it will send the statuses of all the devices in the garage back to the client and wait for the next command. When the server receives a control command, it will change the status of a device depends on the command. Any kinds of errors happened in the idle state will disconnect the connection.  
+Figure3.1 is the new DFA of the MCGP protocol. It has 4 states, after the connection between client and server successfully been set up.The server will check whether the client's version is supported or not. If not, the connection will be closed. If the version is supported by the server, it will send back an response and move to the await authentication state. In the authentication state, the server will check whether or not the identifier sent by the client matches its own. If not,the connection will be closed. If succeed, the server will move to idle state. In idle state, the server will keep on listening request sent by the client. It supposed to deal with two kinds of operation, list and control. When the server receives list command,it will send the statuses of all the devices in the garage back to the client and wait for the next command. When the server receives a control command, it will change the status of a device depends on the command. Any kinds of errors happened in the idle state will disconnect the connection.  
 
 ![NEW DFA HERE](dfa.jpg)  
-                  Figure3.1
+                                                        Figure3.1
 
 4. Extensibility
 =======
