@@ -11,12 +11,12 @@ connection.
 The protocol works in a client-server mode and provides authentication and
 encryption using TLS. After the client passes the server’s authentication,
 users can have a remote connection with their garage. Applications that follow
-MCGP will provide two services to users: 
+MCGP will provide two services to users:
 
 1. The monitor service, server may connect to many digital devices in the
 garage such as thermometer, barometer and hygrometer. This allows a user
 to watch various environment parameters through the client.
-    
+
 2. The control service, in which a user can remotely control the door of
 the garage or the light inside it through client. Figure 1 is the schematic
 diagram of the MCGP.
@@ -62,11 +62,11 @@ Flow control is handled at the TCP/IP Layer.
    +---------------+---------------+---------------+---------------+
    | dev_id[2] (1) |  dev_type (1) | dev_status[2] | dev_action[2] |
    +---------------+---------------+---------------+---------------+
-   |                        dev_value (4)                          | 
+   |                        dev_value (4)                          |
    +---------------+---------------+---------------+---------------+
    | dev_id[3] (1) |  dev_type (1) | dev_status[3] | dev_action[3] |
    +---------------+---------------+---------------+---------------+
-   |                        dev_value (4)                          | 
+   |                        dev_value (4)                          |
    +---------------+---------------+---------------+---------------+
    | dev_id[4] (1) |  dev_type (1) | dev_status[4] | dev_action[4] |
    +---------------+---------------+---------------+---------------+
@@ -223,7 +223,7 @@ Erronous server response:
 * op=0x05 (control with action)
 * errno=0x04 (control error)
 
-# 2.5 Quality of Service / Error Control 
+# 2.5 Quality of Service / Error Control
 
 The are several different types of error control as mentioned above. When
 an error occurs the error message and error code are sent. The connection is
@@ -249,24 +249,22 @@ In idle state, the server will keep on listening request sent by the client. It 
 4. Extensibility
 =======
 
-MCGP is build to be an extensible application level protocol. The first reason
-is that it is meant to run on top of existing protocols like TCP. Since TCP
-itself is built to be extensible, we inherit that benefit. 
+MCGP is build to be an extensible application level protocol. There are many fields in the PDU that support expansion in future version. Some areas of extensibility are listed below.
 
-In addition to extensibility with sublayers, there is also the ability to
-extend on an application layer. We could implement a version to be more
-specific that would be built on top of MCGP. It could validate certain types
-of devices by massages in the payload. 
+4.1 Version
+The first byte in the PDU is a protocol version field. In initial handshake, the client sends the version number to the server, which checks if it supports it and then responds. Future protocol versions may increment the protocol version on the client and server side when newer protocol versions are established. Also a server set to run at a higher version might optionally support lower protocol versions and switch to that mode when sending messages depending on the value it receives during the handshake.
 
-We could also build on top to add additional device types with new device codes
- to the pdu in future versions. 
+4.2 Operations
+Since only the first 6 values of the opcode byte are used, future protocol versions might support future operations (say for instance publish / subscribe operations) which could occupy unused values in that field.
 
-Additional protocols also extend this one and define custom messages and build
-a more specific message spec that certain devices and server applications could
-honor, for instance say Company X builds garage doors and other automated
-devices, they could define a protocol XMCGP which has specific messages that X
-devices and X Server implementation understand. This MCGP serves as a building
-block for future home automation product protocols.
+4.3 Devices
+The server may list up to 5 devices in a single message. However the opcode defines if the list is complete or more devices are to follow. This allows for the protocol to support many devices and scale up depending on the need.
+
+Now the device type byte currently has only 3 possible device types, but the other values are left for future device types to be used with this protocol. Furthermore, many different device actions may be defined. Similarly the device value has 4 bytes which may be specifically defined or reserved for certain messages in future protocol versions.
+
+4.4 Configurability
+MCGP is meant to run on top of existing protocols like TCP. Since TCP itself is built to be extensible, we inherit that benefit.
+One could implement a version to be more specific that would be built on top of MCGP. It could validate certain types of devices by messages in the device values in the Application Layer.
 
 
 5. Security
@@ -307,26 +305,22 @@ phase.
   resiliency against MITM attacks.
 * Packet tampering - the use of TLS provides sufficient protection against any
   message tampering.
-  
+
 6. Differences
 =======
-  
+
 # 6.1 PDU Changes
 
 The payload section was detailed so that each device was send in the payload.  
 This allowed the payload to parsed quicker and required less changes.  
-  
+
 # 6.2 Security
 
 The authentication and encryption model was reenginerred to benefit from SSL/TLS
 encryption and authentication instead of the previous, custom-designed MAC
 algorithm that did not provide any confidentiality.
-  
+
 # 6.2 DFA
 
 As mentioned in our feedback the DFA was simplied to better show the states.  It
 was also updated to match the changes for security.
-
-   
-  
-  
