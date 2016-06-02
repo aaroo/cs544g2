@@ -1,3 +1,17 @@
+/**
+CS 544 Computer Networks
+6-1-2016
+Group2:
+	Daniel Speichert
+	Kenneth Balogh
+	Arudra Venkat
+	Xiaofeng Zhou
+purpose:
+	STATEFUL,CONCURRENT,SERVICE
+	protocol.go is the realization of the MCGP protocol.
+	It will send on build and send the packets per the DFA
+ */
+ 
 package main
 
 import (

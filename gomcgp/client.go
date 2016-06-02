@@ -1,3 +1,18 @@
+/**
+CS 544 Computer Networks
+6-1-2016
+Group2:
+	Daniel Speichert
+	Kenneth Balogh
+	Arudra Venkat
+	Xiaofeng Zhou
+purpose:
+	STATEFUL,CONCURRENT,SERVICE,UI
+	client.go is the realization of the server end of the MCGP protocol.
+	It will send on designated port and handle the data it received
+	from the server based on the DFA.
+ */
+ 
 package main
 
 import (

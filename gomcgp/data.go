@@ -1,5 +1,18 @@
+/**
+CS 544 Computer Networks
+6-1-2016
+Group2:
+	Daniel Speichert
+	Kenneth Balogh
+	Arudra Venkat
+	Xiaofeng Zhou
+purpose:
+	UI
+	data.go simulates the difference devices the server can send
+ */
+ 
 package main
-
+ 
 import "math/rand"
 
 var devices []Device = []Device{

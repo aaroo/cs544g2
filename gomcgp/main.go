@@ -1,3 +1,16 @@
+/**
+CS 544 Computer Networks
+6-1-2016
+Group2:
+	Daniel Speichert
+	Kenneth Balogh
+	Arudra Venkat
+	Xiaofeng Zhou
+purpose:
+	SERVICE,UI
+	main.go is command line interface to the program.
+ */
+ 
 package main
 
 import (
