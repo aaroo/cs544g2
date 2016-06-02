@@ -7,7 +7,7 @@ Group2:
 	Arudra Venkat
 	Xiaofeng Zhou
 purpose:
-	STATEFUL,CONCURRENT,SERVICE
+	SERVICE 
 	protocol.go is the realization of the MCGP protocol.
 	It will send on build and send the packets per the DFA
  */

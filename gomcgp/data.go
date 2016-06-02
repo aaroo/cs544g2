@@ -7,7 +7,7 @@ Group2:
 	Arudra Venkat
 	Xiaofeng Zhou
 purpose:
-	UI
+	SERVICE 
 	data.go simulates the difference devices the server can send
  */
  

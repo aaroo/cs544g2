@@ -307,3 +307,24 @@ phase.
   resiliency against MITM attacks.
 * Packet tampering - the use of TLS provides sufficient protection against any
   message tampering.
+  
+6. Differences
+=======
+  
+# 6.1 PDU Changes
+
+The payload section was detailed so that each device was send in the payload.  
+This allowed the payload to parsed quicker and required less changes.  
+  
+# 6.2 Security
+
+As mentioned in 5.3 several secuirty issues were addressed.
+  
+# 6.2 DFA
+
+As mentioned in our feedback the DFA was simplied to better show the states.  It
+was also updated to match the changes for security.
+
+   
+  
+  

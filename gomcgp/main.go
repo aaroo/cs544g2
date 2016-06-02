@@ -7,7 +7,7 @@ Group2:
 	Arudra Venkat
 	Xiaofeng Zhou
 purpose:
-	SERVICE,UI
+	CONCURRENT ,UI  
 	main.go is command line interface to the program.
  */
  
