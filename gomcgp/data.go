@@ -15,6 +15,7 @@ package main
  
 import "math/rand"
 
+//default devices used for server implementation and demo
 var devices []Device = []Device{
 	Device{Id: 1, Type: TYPE_GARAGE_DOOR, Status: STATUS_ON},
 	Device{Id: 2, Type: TYPE_LIGHT, Status: STATUS_ON},

@@ -30,6 +30,7 @@ var (
 )
 
 func main() {
+	// setup information for app information at command line
 	app := cli.NewApp()
 	app.Name = "gomcgp"
 	app.Usage = "CLI client MCGP server"
@@ -43,7 +44,7 @@ func main() {
 		rand.Seed(time.Now().UTC().UnixNano())
 		return nil
 	}
-
+	//setup path to ip and default ident information
 	app.Flags = []cli.Flag{
 		cli.StringFlag{Name: "certificate, c", Value: "certificate.pem",
 			Usage: "path to certificate in PEM format", EnvVar: "CERTIFICATE_PATH"},
@@ -56,7 +57,7 @@ func main() {
 		cli.StringFlag{Name: "ident, i", Value: "john",
 			Usage: "identity to use (CN of certificate)", EnvVar: "IDENT"},
 	}
-
+	//build menu of commands
 	app.Commands = []cli.Command{
 		{
 			Name:      "server",

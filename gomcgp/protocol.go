@@ -23,7 +23,7 @@ import (
 	"io/ioutil"
 	"strings"
 )
-
+//build packet information and states per DFA
 const (
 	SUPPORTED_VERSION = 1
 )
@@ -140,7 +140,7 @@ func (pdu PDU) Write(conn *tls.Conn) (err error) {
 	fmt.Printf("Sent %d bytes.\n", sent)
 	return
 }
-
+//read PDU information
 func readPDU(conn *tls.Conn) (pdu PDU, err error) {
 	var buffer [52]byte
 	receivedBytes := 0

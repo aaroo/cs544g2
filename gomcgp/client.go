@@ -26,6 +26,7 @@ import (
 	"github.com/codegangsta/cli"
 )
 
+//cleint connect using certficate
 func clientConnect(c *cli.Context) (conn *tls.Conn) {
 	ca := x509.NewCertPool()
 	if pemData, err := ioutil.ReadFile(c.GlobalString("ca")); err != nil {
@@ -40,7 +41,7 @@ func clientConnect(c *cli.Context) (conn *tls.Conn) {
 	checkErrFatal("Error connecting to server", err)
 	return
 }
-
+//handle client version handshake and returns errors as required
 func clientVersionHandshake(conn *tls.Conn) (err error) {
 	vh := PDU{Version: SUPPORTED_VERSION, Operation: OP_VERSION}
 	err = vh.Write(conn)
@@ -61,7 +62,7 @@ func clientVersionHandshake(conn *tls.Conn) (err error) {
 	}
 	return
 }
-
+//handles the client authentication
 func clientAuthenticate(conn *tls.Conn, ident string) (err error) {
 	vh := PDU{Version: SUPPORTED_VERSION, Operation: OP_AUTHENTICATE, Identifier: ident}
 	err = vh.Write(conn)
@@ -82,7 +83,7 @@ func clientAuthenticate(conn *tls.Conn, ident string) (err error) {
 	}
 	return
 }
-
+//builds and recieves the list of devices sent from the server
 func clientDeviceList(conn *tls.Conn) (l_devices []Device, err error) {
 	vh := PDU{Version: SUPPORTED_VERSION, Operation: OP_LIST}
 	err = vh.Write(conn)
@@ -112,7 +113,7 @@ func clientDeviceList(conn *tls.Conn) (l_devices []Device, err error) {
 	}
 	return
 }
-
+//client actions based on packet received from server
 func clientAction(conn *tls.Conn, id, action int8) (err error) {
 	var l_devices [5]Device
 	l_devices[0].Id = id
