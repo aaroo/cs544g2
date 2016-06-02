@@ -1,4 +1,8 @@
-# Manual testing
+# Running/Testing
+
+A compiled executable for windows and linux are included.  Follow the instructions below to
+install GO.  If you want to compile the source follow th rest of the instructions after installing
+GO.
 
 ```bash
 # should print help:
@@ -21,7 +25,7 @@ gomcgp device list
 ```bash\windows
 go build -ldflags "-X main.buildtime '`date`'"
 ```
-# Windows Setup to Compile Source
+# Windows Setup to Run/Compile Source
 
 Install [Go](https://golang.org/dl/)
 
@@ -64,5 +68,30 @@ Windows 7
 ```
 This will install the required packages into your GOPATH
 
+### Robustness
+
+We have tested our implementation against basic use cases fuzzing.  The protocol
+has not gone through extensive testing to say it is fully robust.  Some basic testing
+was done.   
+- Correctness:
+  Tested  functionality of the different components of the code.  The implmentation of
+  version checks, autentication and security.
+- Protocol correctness:
+  In addition we ran tests to check how the protocol is implemented against 
+  the specification and DFA.
+- Robustness:
+   A few tests that we ran were sendinng
+  - invalid messages
+  - changed the user but supplied the wrong certificate
+  - sending invalid ports
+This was not an exahustive list of testing but showed we could handle basic errors.
+- Concurrency:
+  We tested that the server could handle multiple connections. 
+- Environment:
+  The server-client was tested on different operating systems including windows and linux.
+
+### Extra Credit
+The extra credit was not implmented.
+
 ### Version
-1.0.0
+1.0.1
