@@ -318,7 +318,9 @@ This allowed the payload to parsed quicker and required less changes.
   
 # 6.2 Security
 
-As mentioned in 5.3 several secuirty issues were addressed.
+The authentication and encryption model was reenginerred to benefit from SSL/TLS
+encryption and authentication instead of the previous, custom-designed MAC
+algorithm that did not provide any confidentiality.
   
 # 6.2 DFA
 
