@@ -243,7 +243,7 @@ Figure3.1 is the new DFA of the MCGP protocol. It has 4 states, after the connec
 In the authentication state, the server will check whether or not the identifier sent by the client matches its own. If not,the connection will be closed. If succeed, the server will move to idle state.  
 In idle state, the server will keep on listening request sent by the client. It supposed to deal with two kinds of operation, list and control. When the server receives list command,it will send the statuses of all the devices in the garage back to the client and wait for the next command. When the server receives a control command, it will change the status of a device depends on the command. Any kinds of errors happened in the idle state will disconnect the connection.  
 
-![NEW DFA HERE](dfa.jpg)  
+![NEW DFA HERE](dfa1.jpg)  
                                                         Figure3.1
 
 4. Extensibility
