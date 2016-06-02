@@ -1,17 +1,19 @@
 /**
 CS 544 Computer Networks
 6-1-2016
-Group2:
+
+Group 2:
 	Daniel Speichert
 	Kenneth Balogh
 	Arudra Venkat
 	Xiaofeng Zhou
-purpose:
-	SERVICE 
-	protocol.go is the realization of the MCGP protocol.
-	It will send on build and send the packets per the DFA
- */
- 
+
+Purpose:
+	SERVICE
+	protocol.go defined the structures of the packet and methods of encoding
+    and decoding the byte-stream into meaningful packet.
+*/
+
 package main
 
 import (
@@ -23,7 +25,8 @@ import (
 	"io/ioutil"
 	"strings"
 )
-//build packet information and states per DFA
+
+// protocol-defined constants
 const (
 	SUPPORTED_VERSION = 1
 )
@@ -56,7 +59,7 @@ const (
 	STATUS_OFF // 0x02
 )
 
-// Full packet
+// Full packet structure
 type PDU struct {
 	Version    int8   // 1 byte
 	Operation  int8   // 1 byte
@@ -66,6 +69,7 @@ type PDU struct {
 	Devices    [5]Device
 }
 
+// device structure
 type Device struct {
 	Id     int8    // 1 byte
 	Type   int8    // 1 byte
@@ -74,6 +78,7 @@ type Device struct {
 	Value  float32 // 4 bytes
 }
 
+// the function to write a packet structure as bytes into a TCP socket
 func (pdu PDU) Write(conn *tls.Conn) (err error) {
 	buf := new(bytes.Buffer)
 	err = binary.Write(buf, binary.BigEndian, pdu.Version)
@@ -129,18 +134,19 @@ func (pdu PDU) Write(conn *tls.Conn) (err error) {
 		}
 	}
 
-	fmt.Printf("Marshalled message to send:\n% x\n", buf.Bytes())
+	//fmt.Printf("Marshalled message to send:\n% x\n", buf.Bytes())
 	bytes, err := ioutil.ReadAll(buf)
 	if err != nil {
 		fmt.Println("ioutil.ReadAll failed:", err)
 		return
 	}
-	fmt.Printf("Sending %d bytes...\n", len(bytes))
-	sent, err := conn.Write(bytes)
-	fmt.Printf("Sent %d bytes.\n", sent)
+	//fmt.Printf("Sending %d bytes...\n", len(bytes))
+	_, err = conn.Write(bytes)
+	//fmt.Printf("Sent %d bytes.\n", sent)
 	return
 }
-//read PDU information
+
+// read PDU from a TCP socket (post-TLS), decoding data into fields of the PDU
 func readPDU(conn *tls.Conn) (pdu PDU, err error) {
 	var buffer [52]byte
 	receivedBytes := 0
@@ -155,7 +161,7 @@ func readPDU(conn *tls.Conn) (pdu PDU, err error) {
 		}
 	}
 
-	fmt.Printf("Received PDU: %+v\n", buffer)
+	//fmt.Printf("Received PDU: %+v\n", buffer)
 
 	err = binary.Read(bytes.NewReader(buffer[0:1]), binary.BigEndian, &pdu.Version)
 	if err != nil {

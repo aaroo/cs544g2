@@ -1,21 +1,22 @@
 /**
 CS 544 Computer Networks
 6-1-2016
-Group2:
+
+Group 2:
 	Daniel Speichert
 	Kenneth Balogh
 	Arudra Venkat
 	Xiaofeng Zhou
-purpose:
-	STATEFUL,CONCURRENT,SERVICE,UI
+
+Purpose:
+	STATEFUL, CONCURRENT, SERVICE, UI
 	server.go is the realization of the server end of the MCGP protocol.
-	It will listen on designated port and handle the request it received
-	from the client based on the DFA.
- */
+	It will listen on designated port and handle the incoming connections
+    in a stateful way. A new goroutine is spawned for each handled connection.
+*/
 package main
 
 import (
-	"crypto/rand"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
@@ -25,46 +26,41 @@ import (
 	"math"
 	mrand "math/rand"
 	"os"
-	"time"
 
 	"github.com/codegangsta/cli"
 )
 
-/**
- Function to check fatal error, if error happened, stop the server.
- */
+// a helper function to check if error is not nil, print it and abort the server
 func checkErrFatal(info string, err error) {
 	if err != nil {
 		fmt.Printf("Fatal error: %s: %s\n", info, err)
 		os.Exit(1)
 	}
 }
-/**
-Function to start and configure the server.
- */
+
+// function that starts the server listener
 func runServer(c *cli.Context) error {
-	//bind server to the specific ip address and port.
+	// user-defined address:port to bind is passed as first argument
 	bindTo := c.Args().First()
-	//if user did not designate ip address and port, bind server to the default ip address.
+	// default address:port binding if unspecified
 	if bindTo == "" {
 		bindTo = "127.0.0.1:6666"
 	}
 	fmt.Printf("Binding server to %s\n", bindTo)
 
-	//generate a new, empty CertPool.
 	ca := x509.NewCertPool()
-
-	//load SSL client's CA certificate.
+	// load SSL CA certificate
 	if pemData, err := ioutil.ReadFile(c.GlobalString("ca")); err != nil {
-		log.Fatalf("Cannot load SSL client CA certificate! %s", err)
+		log.Fatalf("Cannot load SSL CA certificate! %s", err)
 	} else {
 		ca.AppendCertsFromPEM(pemData)
 	}
 
-	//read and parse public/private key pair
+	// read and parse public/private key pair
 	cert, err := tls.LoadX509KeyPair(c.GlobalString("certificate"), c.GlobalString("key"))
 	checkErrFatal("Error loading certificate", err)
-	//if no error happened, set up the tls configuration.
+
+	// built TLS configuration
 	config := tls.Config{
 		Certificates:             []tls.Certificate{cert},
 		ClientAuth:               tls.RequireAndVerifyClientCert,
@@ -78,18 +74,12 @@ func runServer(c *cli.Context) error {
 			tls.TLS_RSA_WITH_AES_256_CBC_SHA,
 		}}
 
-	//set up the time.
-	now := time.Now()
-	config.Time = func() time.Time { return now }
-	config.Rand = rand.Reader
-
-	//set up tls listener, the listener will listen on specific port and ip address
-	//that the server has been bound to.
+	// now start TLS listener (server socket)
 	listener, err := tls.Listen("tcp", bindTo, &config)
 	checkErrFatal("Error listening on "+bindTo, err)
-	defer listener.Close()
+	defer listener.Close() // defer closing the socket until end-of-function
 	fmt.Println("Now listening...")
-	//if no error happened, the listener will keep on listening for all coming connections.
+	// infinite loop to accept new connections
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -98,50 +88,49 @@ func runServer(c *cli.Context) error {
 		}
 		fmt.Printf("Accepted connection from %s\n", conn.RemoteAddr())
 		tlsconn, ok := conn.(*tls.Conn)
-		tlsconn.Handshake()
+		tlsconn.Handshake() // TLS handshake
 		if ok {
-			//fmt.Printf("%+v\n", tlsconn.ConnectionState().PeerCertificates[0])
 			fmt.Printf("Peer CN: %s\n", tlsconn.ConnectionState().PeerCertificates[0].Subject.CommonName)
 		}
+
+		// spawn handleClient function as a new go-routine for this connection
 		go handleClient(tlsconn)
 	}
 
 	return nil
 }
 
-
-/**
-Function that will handle the client's connection.
- */
+// a function that is run per-connection and executes the DFA
 func handleClient(conn *tls.Conn) {
 	state := "awaiting-version-handshake"
 	var response PDU
 
 	for {
-		//parse the PDU sent by the client.
+		// get incoming PDU
 		pdu, err := readPDU(conn)
 		if err == io.EOF {
 			conn.Close()
 			fmt.Println("Connection closed.")
 			return
 		}
+		// invalid PDU -> close connection
 		if err != nil {
 			fmt.Println("reading PDU failed:", err)
 			conn.Close()
 			return
 		}
 
-		//DFA that the server will follow to deal with the parsed pdu.
+		// DFA states -> behavior dependant on current expectation (state)
 		switch state {
 		case "awaiting-version-handshake":
 			{
-				//if the version is supported, send back a supported_version response
-				//and move to the next state.
+				// if the version is supported, send back a supported_version response
+				// and move to the next state
 				if pdu.Version == SUPPORTED_VERSION && pdu.Operation == OP_VERSION {
 					response = PDU{Version: SUPPORTED_VERSION, Operation: OP_VERSION}
 					state = "awaiting-authentication"
 				} else {
-					//if the version is not supported, send back a error_version response and close the connection.
+					// if the version is not supported, send back error
 					response = PDU{Version: SUPPORTED_VERSION, Operation: OP_VERSION, Error: ERR_VERSION}
 					// no change in state
 				}
@@ -155,12 +144,13 @@ func handleClient(conn *tls.Conn) {
 			{
 				fmt.Printf("Received ident (%d): %s\nmatch: %+v\n",
 					len(pdu.Identifier), pdu.Identifier, pdu.Identifier == "john")
-				// if identifiers mateches, move to the next states.
+
+				// perform credential checks
 				if pdu.Operation == OP_AUTHENTICATE && pdu.Identifier == "john" {
 					response = PDU{Version: SUPPORTED_VERSION, Operation: OP_AUTHENTICATE}
 					state = "idle"
 				} else {
-					//if identifiers do not match, send back a authentication error and close the connection.
+					// authentication error is sent
 					response = PDU{Version: SUPPORTED_VERSION, Operation: OP_AUTHENTICATE, Error: ERR_AUTHENTICATE}
 					// no change in state
 				}
@@ -172,8 +162,8 @@ func handleClient(conn *tls.Conn) {
 			}
 		case "idle":
 			{
-				// send device status list back to the client
 				if pdu.Operation == OP_LIST {
+					// send device status list back to the client
 					no_packets := int(math.Ceil(float64(len(devices)) / 5))
 					for i := 0; i < no_packets; i++ {
 						var l_devices [5]Device
@@ -192,8 +182,8 @@ func handleClient(conn *tls.Conn) {
 							}
 						}
 					}
-				}else if pdu.Operation == OP_CONTROL {
-					//change device's status based on the received PDU.
+				} else if pdu.Operation == OP_CONTROL {
+					// perform the operation/action on the device as requested
 					var success bool
 					for k, v := range devices {
 						if v.Id != pdu.Devices[0].Id {
@@ -210,12 +200,18 @@ func handleClient(conn *tls.Conn) {
 						devices[k].Status = pdu.Devices[0].Action
 						success = true
 					}
+
+					// send back appropriate response (success/error)
 					if success {
 						response = PDU{Version: SUPPORTED_VERSION, Operation: OP_CONTROL}
 					} else {
 						response = PDU{Version: SUPPORTED_VERSION, Operation: OP_CONTROL, Error: ERR_CONTROL}
 					}
 				} else {
+					// if it's neither OP_LIST nor OP_CONTROL, send back an error
+					// saying the operation was unexpected as no other operations
+					// can happen in the "idle" state
+
 					response = PDU{Version: SUPPORTED_VERSION, Operation: pdu.Operation, Error: ERR_UNEXPECTED_OP}
 				}
 				if err := response.Write(conn); err != nil {

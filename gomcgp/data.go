@@ -1,18 +1,22 @@
 /**
 CS 544 Computer Networks
 6-1-2016
-Group2:
+
+Group 2:
 	Daniel Speichert
 	Kenneth Balogh
 	Arudra Venkat
 	Xiaofeng Zhou
-purpose:
-	SERVICE 
-	data.go simulates the difference devices the server can send
- */
- 
+
+Purpose:
+	SERVICE
+	data.go defines fake 'static' information that is served over MCGP protocol.
+    This would normally be dynamically harvested from connected devices via
+    other means.
+*/
+
 package main
- 
+
 import "math/rand"
 
 //default devices used for server implementation and demo

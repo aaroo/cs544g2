@@ -1,16 +1,18 @@
 /**
 CS 544 Computer Networks
 6-1-2016
-Group2:
+
+Group 2:
 	Daniel Speichert
 	Kenneth Balogh
 	Arudra Venkat
 	Xiaofeng Zhou
-purpose:
-	CONCURRENT ,UI  
-	main.go is command line interface to the program.
- */
- 
+
+Purpose:
+	CONCURRENT, UI
+	main.go is the CLI "entrance" to the gomcgp program
+*/
+
 package main
 
 import (
@@ -30,7 +32,7 @@ var (
 )
 
 func main() {
-	// setup information for app information at command line
+	// setup CLI
 	app := cli.NewApp()
 	app.Name = "gomcgp"
 	app.Usage = "CLI client MCGP server"
@@ -40,11 +42,12 @@ func main() {
 	app.EnableBashCompletion = true
 
 	app.Before = func(c *cli.Context) error {
-		// set safe random seed
+		// set "safe" random seed based on current time
 		rand.Seed(time.Now().UTC().UnixNano())
 		return nil
 	}
-	//setup path to ip and default ident information
+
+	// define CLI-global configuration flags
 	app.Flags = []cli.Flag{
 		cli.StringFlag{Name: "certificate, c", Value: "certificate.pem",
 			Usage: "path to certificate in PEM format", EnvVar: "CERTIFICATE_PATH"},
@@ -57,7 +60,8 @@ func main() {
 		cli.StringFlag{Name: "ident, i", Value: "john",
 			Usage: "identity to use (CN of certificate)", EnvVar: "IDENT"},
 	}
-	//build menu of commands
+
+	// available commands in CLI
 	app.Commands = []cli.Command{
 		{
 			Name:      "server",
@@ -65,6 +69,7 @@ func main() {
 			Usage:     "start MGCP server",
 			Action:    runServer,
 		},
+		/* dev-only
 		{
 			Name:  "debug",
 			Usage: "Test connection",
@@ -89,39 +94,48 @@ func main() {
 				return nil
 			},
 		},
+		*/
 		{
-			Name:  "device",
-			Usage: "device commands",
+			Name:      "device",
+			ShortName: "d",
+			Usage:     "device commands",
 			Subcommands: []cli.Command{
 				{
-					Name:  "list",
-					Usage: "retrieve list of devices",
+					Name:      "list",
+					ShortName: "l",
+					Usage:     "retrieve list of devices",
 					Action: func(c *cli.Context) error {
+						// connect to the server
 						conn := clientConnect(c)
-						fmt.Println("Connection established")
+						//fmt.Println("Connection established")
 
+						// perform version handshake
 						if err := clientVersionHandshake(conn); err != nil {
 							fmt.Printf("Error in handshake: %s\n", err)
 							os.Exit(1)
 						}
-						fmt.Println("Handshake successful")
+						//fmt.Println("Handshake successful")
 
+						// perform authentication
 						if err := clientAuthenticate(conn, c.GlobalString("ident")); err != nil {
 							fmt.Printf("Error in authentication: %s\n", err)
 							os.Exit(1)
 						}
-						fmt.Println("Authentication successful")
+						//fmt.Println("Authentication successful")
 
+						// get devices
 						l_devices, err := clientDeviceList(conn)
 						if err != nil {
 							fmt.Printf("Error in list: %s\n", err)
 							os.Exit(1)
 						}
-						fmt.Println("List successful")
+						//fmt.Println("List successful")
 
+						// close connection
 						conn.Close()
-						fmt.Println("Connection closed")
+						//fmt.Println("Connection closed")
 
+						// draw the table with output
 						table := tablewriter.NewWriter(os.Stdout)
 						table.SetHeader([]string{"ID", "Type", "Status", "Value"})
 						for _, d := range l_devices {
@@ -177,37 +191,45 @@ func main() {
 					},
 				},
 				{
-					Name:  "action",
-					Usage: "perform an action on the device",
+					Name:      "action",
+					ShortName: "a",
+					Usage:     "perform an action on the device",
 					Flags: []cli.Flag{
 						cli.BoolFlag{Name: "open, on"},
 						cli.BoolFlag{Name: "close, off"},
 					},
 					Action: func(c *cli.Context) error {
+						// verify arguments
 						if len(c.Args()) != 1 {
 							fmt.Errorf("Provide device ID as first argument!\n")
 							os.Exit(1)
 						}
+
+						// verify flags for sanity
 						if !c.Bool("open") && !c.Bool("close") {
 							fmt.Errorf("Provide at least one action!\n")
 							os.Exit(1)
 						}
 
+						// connect to the server
 						conn := clientConnect(c)
-						fmt.Println("Connection established")
+						//fmt.Println("Connection established")
 
+						// perform version handshake
 						if err := clientVersionHandshake(conn); err != nil {
 							fmt.Printf("Error in handshake: %s\n", err)
 							os.Exit(1)
 						}
-						fmt.Println("Handshake successful")
+						//fmt.Println("Handshake successful")
 
+						// perform authentication
 						if err := clientAuthenticate(conn, c.GlobalString("ident")); err != nil {
 							fmt.Printf("Error in authentication: %s\n", err)
 							os.Exit(1)
 						}
-						fmt.Println("Authentication successful")
+						//fmt.Println("Authentication successful")
 
+						// prepare action parameter
 						var id, action int8
 						if c.Bool("open") {
 							action = STATUS_ON
@@ -215,18 +237,21 @@ func main() {
 							action = STATUS_OFF
 						}
 
+						// parse device ID from input
 						tmp, _ := strconv.ParseInt(c.Args().First(), 0, 8)
 						id = int8(tmp)
 
+						// call the action on the server
 						err := clientAction(conn, id, action)
 						if err != nil {
 							fmt.Printf("Error in action: %s\n", err)
 							os.Exit(1)
 						}
-						fmt.Println("Action successful")
+						//fmt.Println("Action successful")
 
+						// close connection
 						conn.Close()
-						fmt.Println("Connection closed")
+						//fmt.Println("Connection closed")
 
 						return nil
 					},
