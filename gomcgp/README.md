@@ -12,26 +12,29 @@ gomcgp device list
 # should print authentication failure:
 gomcgp -i admin device list
 # should turn on thermometer
-gomcgp action --on 6
+gomcgp device action --on 6
 # should close the garage door:
-gomcgp action --close 1
+gomcgp device action --close 1
 # should show above changes:
 gomcgp device list
 
 ```
 
-# How to build after GO is setup (See Setup Below)
+# How to build after Go is setup (See Setup Below)
 
-```bash\windows
-go build -ldflags "-X main.buildtime '`date`'"
+```bash
+GOOS=linux GOARCH=amd64 go build -ldflags "-X main.buildtime '`date`' -X main.buildver '`git log --pretty=format:'%h' -n 1`'" -o gomcgp
+GOOS=windows GOARCH=amd64 go build -ldflags "-X main.buildtime '`date`' -X main.buildver '`git log --pretty=format:'%h' -n 1`'" -o gomcgp_x64.exe
+GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.buildtime '`date`' -X main.buildver '`git log --pretty=format:'%h' -n 1`'" -o gomcgp_darwin-amd64
 ```
+
 # Windows Setup to Run/Compile Source
 
 Install [Go](https://golang.org/dl/)
 
 Windows 7
 
-  - Setup GO in windows path 
+  - Setup GO in windows path
   - From the desktop, right click the Computer icon
   - Choose Properties from the context menu
   - Click the Advanced system settings link
@@ -46,14 +49,14 @@ Windows 7
 
 >Need to locate the Git \cmd directory your computer. Git is typically located here:
 -       C:\Users\<user>\AppData\Local\GitHub\PortableGit_<guid>\cmd\git.exe
->On your computer, replace <user> with your user and find out what the <guid> is for your computer. 
+>On your computer, replace <user> with your user and find out what the <guid> is for your computer.
 - The guid may change each time GitHub updates PortableGit, but they're working on a solution to that
-- Copy it and paste it into a command prompt (right-click > paste to paste in the terminal) to verify that it works. You should see the Git help response that lists common Git commands. 
+- Copy it and paste it into a command prompt (right-click > paste to paste in the terminal) to verify that it works. You should see the Git help response that lists common Git commands.
 -  If you see that the system cannot find the path specified. Then the URL isn’t right. Once you have it right, create the link to the directory using this format:
 -       C:\Users\<user>\AppData\Local\GitHub\PortableGit_<guid>\cmd
 	(Note: \cmd at the end, not \cmd\git.exe anymore!)
 
-- Install And Build at Once - If GOPATH and Git are Setup in path	
+- Install And Build at Once - If GOPATH and Git are Setup in path
 ```bash
 	# git clone git@github.com:aaroo/cs544g2.git
 	# cd cs544g2/gomcgp
@@ -72,12 +75,12 @@ This will install the required packages into your GOPATH
 
 We have tested our implementation against basic use cases fuzzing.  The protocol
 has not gone through extensive testing to say it is fully robust.  Some basic testing
-was done.   
+was done.
 - Correctness:
   Tested  functionality of the different components of the code.  The implmentation of
   version checks, autentication and security.
 - Protocol correctness:
-  In addition we ran tests to check how the protocol is implemented against 
+  In addition we ran tests to check how the protocol is implemented against
   the specification and DFA.
 - Robustness:
    A few tests that we ran were sendinng
@@ -86,7 +89,7 @@ was done.
   - sending invalid ports
 This was not an exahustive list of testing but showed we could handle basic errors.
 - Concurrency:
-  We tested that the server could handle multiple connections. 
+  We tested that the server could handle multiple connections.
 - Environment:
   The server-client was tested on different operating systems including windows and linux.
 

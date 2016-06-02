@@ -36,7 +36,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "gomcgp"
 	app.Usage = "CLI client MCGP server"
-	app.Version = buildver + " MCGP client (built " + buildtime + ")"
+	app.Version = "MCGP client " + buildver + " (built " + buildtime + ")"
 	app.Author = "Group 2"
 	app.Email = "s@drexel.edu"
 	app.EnableBashCompletion = true
