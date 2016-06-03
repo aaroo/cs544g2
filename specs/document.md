@@ -277,7 +277,6 @@ Now the device type byte currently has only 3 possible device types, but the oth
 
 4.4 Configurability
 MCGP is meant to run on top of existing protocols like TCP. Since TCP itself is built to be extensible, we inherit that benefit.
-One could implement a version to be more specific that would be built on top of MCGP. It could validate certain types of devices by messages in the device values in the Application Layer.
 
 
 5. Security
