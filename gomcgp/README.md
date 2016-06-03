@@ -28,6 +28,9 @@ gomcgp_x64.exe device list
 # How to build after Go is setup (See Setup Below)
 
 ```bash
+Simple Build
+go build -ldflags "-X main.buildtime '`date`'"
+Advanced Build Options
 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.buildtime '`date`' -X main.buildver '`git log --pretty=format:'%h' -n 1`'" -o gomcgp
 GOOS=windows GOARCH=amd64 go build -ldflags "-X main.buildtime '`date`' -X main.buildver '`git log --pretty=format:'%h' -n 1`'" -o gomcgp_x64.exe
 GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.buildtime '`date`' -X main.buildver '`git log --pretty=format:'%h' -n 1`'" -o gomcgp_darwin-amd64
