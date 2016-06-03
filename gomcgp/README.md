@@ -7,19 +7,21 @@ Follow the instructions below to install GO.
 
 If you want to compile the source follow the rest of the instructions after installing GO.
 
+The below commands along with others are demoed in the videos.
+
 ```bash
 # should print help:
-gomcgp
+gomcgp_x64.exe
 # should print device list:
-gomcgp device list
+gomcgp_x64.exe
 # should print authentication failure:
-gomcgp -i admin device list
+gomcgp_x64.exe -i admin device list
 # should turn on thermometer
-gomcgp device action --on 6
+gomcgp_x64.exe device action --on 6
 # should close the garage door:
-gomcgp device action --close 1
+gomcgp_x64.exe device action --close 1
 # should show above changes:
-gomcgp device list
+gomcgp_x64.exe device list
 
 ```
 
