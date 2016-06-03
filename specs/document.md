@@ -1,3 +1,16 @@
+# Monitor and Control Garage Protocol (MCGP)
+						Group 2
+
+						Daniel Speichert
+
+						Kenneth Balogh
+
+						Arudra Venkat
+
+						Xiaofeng Zhou
+\newpage
+
+
 1. Service Description
 =======
 

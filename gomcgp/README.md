@@ -1,8 +1,11 @@
 # Running/Testing
 
-A compiled executable for windows and linux are included.  Follow the instructions below to
-install GO.  If you want to compile the source follow th rest of the instructions after installing
-GO.
+A compiled executable for windows and linux are included.  There are three included *.pem files.
+THese files must be in the same directory as the executable when its being run.  
+
+Follow the instructions below to install GO.  
+
+If you want to compile the source follow the rest of the instructions after installing GO.
 
 ```bash
 # should print help:
