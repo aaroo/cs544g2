@@ -8,7 +8,7 @@ This document contains files that implement MCGP protocol. The following part wi
 
 ## STATEFUL
 
-Since there is a TCP connection between the client and server and there can be multiple back and forth messages on this connection, both client and server need to maintain state. So client.go is responsible for initiating the connection, participating in the handshake and version check and handling operations on the client side. Similarly, server.go is responsible for maintaining state on the server side. the function handleClient() specifically implements the DFA depending on what state it is in thereby what to respond to the client with.
+Since there is a TCP connection between the client and server and there can be multiple back and forth messages on this connection, both client and server need to maintain state. So client.go is responsible for initiating the connection, participating in the handshake and version check and handling operations on the client side. Similarly, `server.go` is responsible for maintaining state on the server side. the function handleClient() specifically implements the DFA depending on what state it is in thereby what to respond to the client with.
 
 ## UI
 
