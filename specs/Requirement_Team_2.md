@@ -2,6 +2,14 @@
 
 This document contains files that implement MCGP protocol. The following part will indicate each file’s function of realizing the protocol requirements in the paper: STATEFUL, CONCURRENT, SERVICE, CLIENT, UI.
 
+```
+client.go : CLIENT, STATEFUL
+main.go: UI  
+protocol.go: SERVICE  
+server.go: STATEFUL, CONCURRENT, SERVICE
+data.go: SERVICE
+```
+
 ## CLIENT
 
 `client.go` is the main client class. It provides a command like interface to the user, who can specify what message to send the server. I starts up and uses an ssl certificate to initialize and establish a  server connection
@@ -16,12 +24,4 @@ Since this is a client server protocol, like the state, the UI needs to be at bo
 
 ## SERVICE
 
-Not sure what service means here.
-
-```
-client.go : CLIENT, STATEFUL, SERVICE
-main.go: UI  
-protocol.go: SERVICE  
-server.go: STATEFUL, CONCURRENT, SERVICE
-data.go: SERVICE
-```
+Service is implemented in `server.go` which starts a listener that will concurrently accept as many connections as necessary on the predefined port (6666 by default),
