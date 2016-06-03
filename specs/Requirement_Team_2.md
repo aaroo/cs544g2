@@ -12,11 +12,11 @@ data.go: SERVICE
 
 ## CLIENT
 
-`client.go` is the main client class. It provides a command like interface to the user, who can specify what message to send the server. I starts up and uses an ssl certificate to initialize and establish a  server connection
+`client.go` is the main client class. It provides a command line interface to the user, who can specify what message to send the server. I starts up and uses an ssl certificate to initialize and establish a  server connection
 
 ## STATEFUL
 
-Since there is a TCP connection between the client and server and there can be multiple back and forth messages on this connection, both client and server need to maintain state. So client.go is responsible for initiating the connection, participating in the handshake and version check and handling operations on the client side. Similarly, `server.go` is responsible for maintaining state on the server side. the function handleClient() specifically implements the DFA depending on what state it is in thereby what to respond to the client with.
+Since there is a TCP connection between the client and server, and there can be multiple back and forth messages on this connection, both client and server need to maintain state. So client.go is responsible for initiating the connection, participating in the handshake and version check and handling operations on the client side. Similarly, `server.go` is responsible for maintaining state on the server side. the function handleClient() specifically implements the DFA depending on what state it is in thereby what to respond to the client with.
 
 ## UI
 
