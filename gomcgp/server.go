@@ -9,7 +9,7 @@ Group 2:
 	Xiaofeng Zhou
 
 Purpose:
-	STATEFUL, CONCURRENT, SERVICE, UI
+	STATEFUL, CONCURRENT, SERVICE
 	server.go is the realization of the server end of the MCGP protocol.
 	It will listen on designated port and handle the incoming connections
     in a stateful way. A new goroutine is spawned for each handled connection.

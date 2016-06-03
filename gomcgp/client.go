@@ -9,7 +9,7 @@ Group 2:
 	Xiaofeng Zhou
 
 Purpose:
-	CLIENT, STATEFUL, UI
+	CLIENT, STATEFUL
 	client.go is the realization of the client end of the MCGP protocol.
 	It will send on designated port and handle the data it received
 	from the server based on the DFA.

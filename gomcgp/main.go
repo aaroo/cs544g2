@@ -9,7 +9,7 @@ Group 2:
 	Xiaofeng Zhou
 
 Purpose:
-	CONCURRENT, UI
+	UI
 	main.go is the CLI "entrance" to the gomcgp program
 */
 
